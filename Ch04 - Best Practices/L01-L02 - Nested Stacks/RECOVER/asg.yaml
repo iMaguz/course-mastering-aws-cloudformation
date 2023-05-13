@@ -17,4 +17,3 @@ Resources:
       LaunchConfigurationName: !Ref LCNameParam
       MaxSize: "1" # Required
       MinSize: "1" # Required
-

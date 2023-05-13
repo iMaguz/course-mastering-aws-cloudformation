@@ -46,7 +46,7 @@ Resources:
     Type: AWS::AutoScaling::LaunchConfiguration
     Properties:
       ImageId: !FindInMap [RegionArch2AMI, !Ref "AWS::Region", HVM64] # Required
-      InstanceType: "t2.micro" # Required
+      InstanceType: "t2.nano" # Required
 
 Outputs:
   LCName:

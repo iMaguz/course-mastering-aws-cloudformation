@@ -18,3 +18,10 @@ Resources:
       MaxSize: "1" # Required
       MinSize: "1" # Required
 
+  WaitCondition:
+    Type: AWS::CloudFormation::WaitCondition
+    DependsOn: ASG
+    CreationPolicy:
+      ResourceSignal:
+        Count: 1
+        Timeout: "PT1M"

@@ -1,5 +1,3 @@
-AWSTemplateFormatVersion: "2010-09-09"
-
 Mappings:
   RegionArch2AMI:
     ap-northeast-1:
@@ -40,15 +38,4 @@ Mappings:
       HVM64: ami-05596fb52c3802012
     cn-northwest-1:
       HVM64: ami-03f7db8b059795736
-
 Resources:
-  LC:
-    Type: AWS::AutoScaling::LaunchConfiguration
-    Properties:
-      ImageId: !FindInMap [RegionArch2AMI, !Ref "AWS::Region", HVM64] # Required
-      InstanceType: "t2.micro" # Required
-
-Outputs:
-  LCName:
-    Description: Launch Configuration Name
-    Value: !Ref LC
