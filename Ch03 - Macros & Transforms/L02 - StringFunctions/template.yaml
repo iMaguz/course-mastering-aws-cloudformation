@@ -6,6 +6,6 @@ Resources:
   StringFunction:
     Type: AWS::Serverless::Function
     Properties:
-      Runtime: nodejs12.x
+      Runtime: nodejs16.x
       CodeUri: src
       Handler: index.handler
