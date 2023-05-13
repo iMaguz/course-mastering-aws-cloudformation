@@ -1,10 +1,3 @@
-Transform:
-  Name: CommonTags
-  Parameters:
-    Name: MySuperCoolApp
-    CreatedBy: Me
-    CostAllocation: MySuperCoolApp
-
 Description: CommonTags macro example template
 
 Resources:

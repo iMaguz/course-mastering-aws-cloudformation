@@ -9,10 +9,3 @@ Resources:
       Runtime: nodejs16.x
       CodeUri: src
       Handler: index.handler
-
-  Macro:
-    Type: AWS::CloudFormation::Macro
-    Properties:
-      Name: CommonTags
-      FunctionName: !GetAtt MacroFunction.Arn
-
