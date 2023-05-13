@@ -4,7 +4,7 @@ Resources:
   LambdaFunction:
     Type: AWS::Serverless::Function
     Properties:
-      Runtime: nodejs12.x
+      Runtime: nodejs16.x
       InlineCode: |
         const { BUCKET } = process.env;
         module.exports.handler = (event, context, callback) => {
