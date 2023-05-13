@@ -15,13 +15,3 @@ Resources:
       Runtime: nodejs16.x
       CodeUri: src
       Handler: index.handler
-      Environment:
-        Variables:
-          LAMBDA_ARN: !GetAtt ResourceFunction.Arn
-
-  Macro:
-    Type: AWS::CloudFormation::Macro
-    Properties:
-      Name: S3Objects
-      FunctionName: !GetAtt MacroFunction.Arn
-

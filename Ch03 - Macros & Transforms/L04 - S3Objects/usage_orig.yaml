@@ -3,15 +3,6 @@ Transform: S3Objects
 Resources:
   Bucket:
     Type: AWS::S3::Bucket
-    Properties:
-      PublicAccessBlockConfiguration:
-        BlockPublicAcls: false
-        BlockPublicPolicy: true
-        IgnorePublicAcls: true
-        RestrictPublicBuckets: true
-      OwnershipControls:
-        Rules:
-          - ObjectOwnership: ObjectWriter
 
   Object1:
     Type: AWS::S3::Object
