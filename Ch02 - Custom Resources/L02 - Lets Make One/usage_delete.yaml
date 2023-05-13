@@ -1,0 +1,17 @@
+AWSTemplateFormatVersion: 2010-09-09
+
+Parameters:
+  ServiceParameter:
+    Type: String
+    Description: Service Name
+  StageParameter:
+    Type: String
+    Default: dev
+    Description: Feature Branch Name
+
+Resources:
+  WebsiteBucket:
+    Type: AWS::S3::Bucket
+  WebsiteBucket2:
+    Type: AWS::S3::Bucket
+
