@@ -58,7 +58,7 @@ Mappings:
   InstanceSize:
     SMALL:
       EC2: t2.micro
-      DB: db.t2.micro
+      DB: db.t2.small
     MEDIUM:
       EC2: t2.small
       DB: db.t2.micro
@@ -93,7 +93,7 @@ Mappings:
     sa-east-1:
       HVM64: ami-05a01ab93a59b45de
     us-east-1:
-      HVM64: ami-012fd5eb46f56731f
+      HVM64: ami-0aa2b7722dc1b5612
     us-east-2:
       HVM64: ami-06e2e609dbf389341
     us-west-1:
@@ -151,7 +151,7 @@ Resources:
     CreationPolicy:
       ResourceSignal:
         Count: 1
-        Timeout: PT30M
+        Timeout: PT15M
     Metadata:
       AWS::CloudFormation::Init:
         configSets:
@@ -159,14 +159,16 @@ Resources:
             - prepare_repositories
             - install_and_enable_cfn_hup
             - prep_ghost
+            - extra_stuff
           updates_install:
             - prepare_repositories
             - install_and_enable_cfn_hup
+            - extra_stuff
         prepare_repositories:
           files:
             /usr/local/bin/add_repository:
               content: |
-                curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash
+                curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash
               mode: "000700"
               owner: root
               group: root
@@ -227,7 +229,7 @@ Resources:
               group: root
             /usr/local/bin/prep_and_install_ghost:
               content: !Sub |
-                !/bin/bash
+                #!/bin/bash
                 export GHOSTDIR=/var/www/ghost
                 export PUBLICDNS=$(curl -s http://169.254.169.254/latest/meta-data/public-hostname)
                 (id ghostuser > /dev/null 2>&1 && echo ghostuser exists...) || (useradd --user-group --create-home ghostuser && echo creating ghostuser...)
@@ -243,6 +245,7 @@ Resources:
                 su - ghostuser -c "cd $GHOSTDIR && ghost setup nginx"
                 else
                 echo ghost not present, installing...
+                npm install ghost-cli@latest -g
                 su - ghostuser -c "cd /var/www/ghost && ghost install --url http://$PUBLICDNS --ip 0.0.0.0 --dbhost ${GhostDbInstance.Endpoint.Address} --dbuser ${DbUser} --dbpass ${DbPassword} --dbname ${DbName} --process systemd --no-prompt --auto"
                 fi
               mode: "000700"
@@ -255,6 +258,10 @@ Resources:
               command: /usr/local/bin/prep_and_install_ghost
             03cleanup:
               command: rm /usr/local/bin/run_mysql_setup /usr/local/bin/prep_and_install_ghost /usr/local/bin/add_repository
+        extra_stuff:
+          packages:
+            apt:
+              php: []
     Properties:
       ImageId: !FindInMap [RegionArch2AMI, !Ref "AWS::Region", HVM64]
       InstanceType: !FindInMap [InstanceSize, !Ref EnvironmentSize, EC2]
@@ -266,9 +273,9 @@ Resources:
           #!/bin/bash -xe
           apt-get update -y
           DEBIAN_FRONTEND=noninteractive apt-get -y -o Dpkg::Options::='--force-confdef' -o Dpkg::Options::='--force-confold' upgrade
-          apt-get install python-pip -y
-          wget https://s3.amazonaws.com/cloudformation-examples/aws-cfn-bootstrap-latest.tar.gz
-          pip install aws-cfn-bootstrap-latest.tar.gz
+          apt-get install python3-pip -y
+          wget https://s3.amazonaws.com/cloudformation-examples/aws-cfn-bootstrap-py3-latest.tar.gz
+          pip3 install aws-cfn-bootstrap-py3-latest.tar.gz
           cp /usr/local/init/ubuntu/cfn-hup /etc/init.d/cfn-hup
           chmod +x /etc/init.d/cfn-hup
           update-rc.d cfn-hup defaults
