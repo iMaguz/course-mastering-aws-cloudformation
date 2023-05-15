@@ -182,7 +182,7 @@ Resources:
                 [cfn-auto-reloader-hook]
                 triggers=post.update
                 path=Resources.GhostServer.Metadata.AWS::CloudFormation::Init
-                action /usr/local/bin/cfn-init --stack ${AWS::StackName} --resource GhostServer --configsets updates_install --region ${AWS::Region}
+                action=/usr/local/bin/cfn-init --stack ${AWS::StackName} --resource GhostServer --configsets updates_install --region ${AWS::Region}
               mode: "000400"
               owner: root
               group: root
@@ -262,6 +262,7 @@ Resources:
           packages:
             apt:
               php: []
+              awscli: []
     Properties:
       ImageId: !FindInMap [RegionArch2AMI, !Ref "AWS::Region", HVM64]
       InstanceType: !FindInMap [InstanceSize, !Ref EnvironmentSize, EC2]
