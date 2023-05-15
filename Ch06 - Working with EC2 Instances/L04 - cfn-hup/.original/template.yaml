@@ -151,17 +151,13 @@ Resources:
     CreationPolicy:
       ResourceSignal:
         Count: 1
-        Timeout: PT30M
+        Timeout: PT15M
     Metadata:
       AWS::CloudFormation::Init:
         configSets:
           full_install:
             - prepare_repositories
-            - install_and_enable_cfn_hup
             - prep_ghost
-          updates_install:
-            - prepare_repositories
-            - install_and_enable_cfn_hup
         prepare_repositories:
           files:
             /usr/local/bin/add_repository:
@@ -173,35 +169,6 @@ Resources:
           commands:
             01_add_repository:
               command: /usr/local/bin/add_repository
-        install_and_enable_cfn_hup:
-          files:
-            /etc/cfn/hooks.d/cfn-auto-reloaded.conf:
-              content: !Sub |
-                [cfn-auto-reloader-hook]
-                triggers=post.update
-                path=Resources.GhostServer.Metadata.AWS::CloudFormation::Init
-                action /usr/local/bin/cfn-init --stack ${AWS::StackName} --resource GhostServer --configsets updates_install --region ${AWS::Region}
-              mode: "000400"
-              owner: root
-              group: root
-            /etc/cfn/cfn-hup.conf:
-              content: !Sub |
-                [main]
-                stack=${AWS::StackId}
-                region=${AWS::Region}
-                verbose=true
-                interval=5
-              mode: "000400"
-              owner: root
-              group: root
-          services:
-            sysvinit:
-              cfn-hup:
-                enabled: "true"
-                ensureRunning: "true"
-                files:
-                  - /etc/cfn/hooks.d/cfn-auto-reloaded.conf
-                  - /etc/cfn/cfn-hup.conf
         prep_ghost:
           packages:
             apt:
@@ -269,9 +236,6 @@ Resources:
           apt-get install python-pip -y
           wget https://s3.amazonaws.com/cloudformation-examples/aws-cfn-bootstrap-latest.tar.gz
           pip install aws-cfn-bootstrap-latest.tar.gz
-          cp /usr/local/init/ubuntu/cfn-hup /etc/init.d/cfn-hup
-          chmod +x /etc/init.d/cfn-hup
-          update-rc.d cfn-hup defaults
           cfn-init --stack ${AWS::StackName} --resource GhostServer --configsets full_install --region ${AWS::Region}
           cfn-signal -e $? --stack ${AWS::StackName} --resource GhostServer --region ${AWS::Region}
 

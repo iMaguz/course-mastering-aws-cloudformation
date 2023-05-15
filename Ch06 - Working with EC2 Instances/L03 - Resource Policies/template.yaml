@@ -144,10 +144,16 @@ Resources:
       AllocatedStorage: !Ref DbAllocatedStorage
       DBSecurityGroups:
         - !Ref DbSecurityByEC2SecurityGroup
+    UpdateReplacePolicy: Snapshot
+    DeletionPolicy: Snapshot
   GhostServer:
     Type: AWS::EC2::Instance
     DependsOn:
       - GhostDbInstance
+    CreationPolicy:
+      ResourceSignal:
+        Count: 1
+        Timeout: PT30M
     Metadata:
       AWS::CloudFormation::Init:
         configSets:
@@ -233,6 +239,7 @@ Resources:
           wget https://s3.amazonaws.com/cloudformation-examples/aws-cfn-bootstrap-latest.tar.gz
           pip install aws-cfn-bootstrap-latest.tar.gz
           cfn-init --stack ${AWS::StackName} --resource GhostServer --configsets full_install --region ${AWS::Region}
+          cfn-signal -e $? --stack ${AWS::StackName} --resource GhostServer --region ${AWS::Region}
 
 Outputs:
   GhostUrl:
