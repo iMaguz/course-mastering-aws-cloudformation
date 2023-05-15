@@ -263,6 +263,7 @@ Resources:
           packages:
             apt:
               php: []
+              awscli: []
     Properties:
       ImageId: !FindInMap [RegionArch2AMI, !Ref "AWS::Region", HVM64]
       InstanceType: !FindInMap [InstanceSize, !Ref EnvironmentSize, EC2]
